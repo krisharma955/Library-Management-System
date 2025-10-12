@@ -1,13 +1,17 @@
 package com.Marks03.LibraryManagementSystem.Service;
 
 import com.Marks03.LibraryManagementSystem.Entity.Book;
+import com.Marks03.LibraryManagementSystem.Entity.BorrowedBooks;
 import com.Marks03.LibraryManagementSystem.Entity.User;
 import com.Marks03.LibraryManagementSystem.Repository.BookRepository;
+import com.Marks03.LibraryManagementSystem.Repository.BorrowedBooksRepository;
 import com.Marks03.LibraryManagementSystem.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 public class ReturnService {
@@ -17,6 +21,9 @@ public class ReturnService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BorrowedBooksRepository borrowedBooksRepository;
 
     public ResponseEntity<String> returnBook(String isbn, String username) {
         Book book = bookRepository.findByIsbn(isbn);
@@ -30,6 +37,11 @@ public class ReturnService {
 
         book.setAvailable(true);
         bookRepository.save(book);
+
+        BorrowedBooks borrowedBooks = borrowedBooksRepository.findByIsbn(book.getIsbn());
+        borrowedBooks.setReturnDate(LocalDateTime.now());
+        borrowedBooks.setReturned(true);
+        borrowedBooksRepository.save(borrowedBooks);
 
         return new ResponseEntity<>("Book successfully returned", HttpStatus.OK);
     }
