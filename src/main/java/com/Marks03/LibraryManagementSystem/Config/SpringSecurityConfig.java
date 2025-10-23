@@ -30,6 +30,7 @@ public class SpringSecurityConfig {
                 )
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
+                .oauth2Login(Customizer.withDefaults())
                 .build();
     }
 
